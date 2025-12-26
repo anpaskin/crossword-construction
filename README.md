@@ -98,7 +98,7 @@ Individual Entries:
 $ python3 crossword_cli.py --check "PUZZLE"
 
 Entry: PUZZLE
-Entry too short (6 letters). NYT theme entries are typically 7-15 letters.
+Entry too short (6 letters). NYT theme entries are typically 8-15 letters.
 ```
 
 ## Contributing
