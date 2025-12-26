@@ -132,9 +132,6 @@ Examples:
   # Analyze theme entries
   %(prog)s --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYS WELL"
   
-  # Check a single entry length
-  %(prog)s --check "CROSSWORD PUZZLE"
-  
   # Get wordplay suggestions
   %(prog)s --wordplay "RUNNING LATE"
         """
@@ -145,12 +142,6 @@ Examples:
         nargs="+",
         metavar="ENTRY",
         help="Analyze theme entries for NYT compliance (provide multiple entries)"
-    )
-    
-    parser.add_argument(
-        "--check",
-        metavar="ENTRY",
-        help="Check if a single entry has appropriate length"
     )
     
     parser.add_argument(
@@ -189,12 +180,6 @@ Examples:
     elif args.analyze:
         results = ThemeHelper.analyze_theme(args.analyze)
         print_analysis(results)
-    
-    elif args.check:
-        is_valid, message = ThemeHelper.validate_entry_length(args.check)
-        print(f"\nEntry: {args.check}")
-        print(message)
-        print()
     
     elif args.wordplay:
         suggestions = ThemeHelper.suggest_wordplay(args.wordplay)

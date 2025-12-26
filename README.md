@@ -5,7 +5,6 @@ A simple command-line tool to aid in crossword construction, following New York 
 ## Features
 
 - **Theme Analysis**: Validate theme entries against NYT guidelines (letter counts)
-- **Entry Validation**: Check if individual entries have appropriate lengths
 - **Wordplay Suggestions**: Get ideas for puns and play-on-words
 - **Guidelines Reference**: Quick access to NYT construction guidelines
 
@@ -41,12 +40,6 @@ Provide multiple theme entries to analyze them against NYT guidelines:
 python3 crossword_cli.py --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYING AROUND"
 ```
 
-### Check Single Entry
-Check if a single entry has an appropriate length:
-```bash
-python3 crossword_cli.py --check "CROSSWORD PUZZLE"
-```
-
 ### Get Wordplay Suggestions
 Get wordplay ideas for a base phrase:
 ```bash
@@ -64,7 +57,7 @@ For 15x15 daily puzzles:
 
 ## Examples
 
-### Example 1: Analyzing a theme
+### Example: Analyzing a theme
 ```bash
 $ python3 crossword_cli.py --analyze "BREAK THE ICE" "BREAK A LEG" "BREAK THE BANK"
 
@@ -89,14 +82,6 @@ Individual Entries:
   • Note: Theme entries have different lengths. Consider matching lengths for easier symmetric placement.
 
 ============================================================
-```
-
-### Example 2: Checking entry length
-```bash
-$ python3 crossword_cli.py --check "PUZZLE"
-
-Entry: PUZZLE
-Entry too short (6 letters). NYT theme entries are typically 8-15 letters.
 ```
 
 ## Contributing
