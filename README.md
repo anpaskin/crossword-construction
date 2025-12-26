@@ -4,7 +4,7 @@ A simple command-line tool to aid in crossword construction, following New York 
 
 ## Features
 
-- **Theme Analysis**: Validate theme entries against NYT guidelines (letter counts, total length)
+- **Theme Analysis**: Validate theme entries against NYT guidelines (letter counts)
 - **Entry Validation**: Check if individual entries have appropriate lengths
 - **Wordplay Suggestions**: Get ideas for puns and play-on-words
 - **Guidelines Reference**: Quick access to NYT construction guidelines
@@ -58,7 +58,6 @@ python3 crossword_cli.py --wordplay "RUNNING LATE"
 For 15x15 daily puzzles:
 - **Theme entries**: 3-5 entries
 - **Entry length**: 8-15 letters each
-- **Total theme length**: 40-45 letters combined
 - **Symmetry**: Entries should be symmetrically placed
 - **Consistency**: All entries should follow the same theme logic
 - **Minimum word length**: 3 letters
@@ -74,7 +73,7 @@ THEME ANALYSIS
 ============================================================
 
 Theme Entry Count: 3
-Total Theme Length: 36 letters
+Total Theme Length: 32 letters
 
 Individual Entries:
 ------------------------------------------------------------
@@ -87,7 +86,6 @@ Individual Entries:
 
 💡 SUGGESTIONS:
 ------------------------------------------------------------
-  • Total theme length is 36 letters. Consider aiming for 40-45 letters for a 15x15 grid.
   • Note: Theme entries have different lengths. Consider matching lengths for easier symmetric placement.
 
 ============================================================

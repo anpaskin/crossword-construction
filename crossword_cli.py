@@ -17,8 +17,6 @@ class ThemeHelper:
     MAX_THEME_ENTRIES = 5
     MIN_ENTRY_LENGTH = 8
     MAX_ENTRY_LENGTH = 15
-    IDEAL_TOTAL_LENGTH_MIN = 40
-    IDEAL_TOTAL_LENGTH_MAX = 45
     
     @staticmethod
     def validate_entry_length(entry: str) -> Tuple[bool, str]:
@@ -66,20 +64,6 @@ class ThemeHelper:
         elif results["entry_count"] > ThemeHelper.MAX_THEME_ENTRIES:
             results["warnings"].append(
                 f"You have many theme entries ({results['entry_count']}). NYT puzzles typically have {ThemeHelper.MIN_THEME_ENTRIES}-{ThemeHelper.MAX_THEME_ENTRIES} theme entries."
-            )
-        
-        # Check total length
-        if results["total_length"] < ThemeHelper.IDEAL_TOTAL_LENGTH_MIN:
-            results["suggestions"].append(
-                f"Total theme length is {results['total_length']} letters. Consider aiming for {ThemeHelper.IDEAL_TOTAL_LENGTH_MIN}-{ThemeHelper.IDEAL_TOTAL_LENGTH_MAX} letters for a 15x15 grid."
-            )
-        elif results["total_length"] > ThemeHelper.IDEAL_TOTAL_LENGTH_MAX:
-            results["suggestions"].append(
-                f"Total theme length is {results['total_length']} letters. This might be too long for a 15x15 grid (ideal: {ThemeHelper.IDEAL_TOTAL_LENGTH_MIN}-{ThemeHelper.IDEAL_TOTAL_LENGTH_MAX} letters)."
-            )
-        else:
-            results["suggestions"].append(
-                f"✓ Total theme length ({results['total_length']} letters) is in the ideal range!"
             )
         
         # Check for length consistency
@@ -191,7 +175,6 @@ Examples:
         print("\nFor 15x15 Daily Puzzles:")
         print(f"  • Theme entries: {ThemeHelper.MIN_THEME_ENTRIES}-{ThemeHelper.MAX_THEME_ENTRIES} entries")
         print(f"  • Entry length: {ThemeHelper.MIN_ENTRY_LENGTH}-{ThemeHelper.MAX_ENTRY_LENGTH} letters each")
-        print(f"  • Total theme length: {ThemeHelper.IDEAL_TOTAL_LENGTH_MIN}-{ThemeHelper.IDEAL_TOTAL_LENGTH_MAX} letters combined")
         print("  • All entries should follow the same theme logic")
         print("  • Entries should be symmetrically placed")
         print("  • Prefer equal-length entries for symmetry")
