@@ -66,14 +66,24 @@ class ThemeHelper:
                 f"You have many theme entries ({results['entry_count']}). NYT puzzles typically have {ThemeHelper.MIN_THEME_ENTRIES}-{ThemeHelper.MAX_THEME_ENTRIES} theme entries."
             )
         
-        # Check for length consistency
+        # Check for paired length symmetry
         lengths = [e["length"] for e in results["entries"]]
         if len(set(lengths)) == 1:
             results["suggestions"].append("✓ All theme entries have the same length - excellent for symmetry!")
         else:
-            results["suggestions"].append(
-                "Note: Theme entries have different lengths. Consider matching lengths for easier symmetric placement."
-            )
+            # Check if entries can be paired by length
+            from collections import Counter
+            length_counts = Counter(lengths)
+            unpaired_lengths = [length for length, count in length_counts.items() if count % 2 != 0]
+            
+            if unpaired_lengths:
+                results["warnings"].append(
+                    f"⚠️  Theme entries must be in pairs of equal lengths for symmetry. Unpaired lengths: {sorted(unpaired_lengths)}"
+                )
+            else:
+                results["suggestions"].append(
+                    "✓ All theme entries are paired by length - good for symmetric placement!"
+                )
         
         return results
     
