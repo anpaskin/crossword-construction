@@ -110,14 +110,14 @@ class ThemeHelper:
             
             with urllib.request.urlopen(synonym_url, timeout=5) as response:
                 synonym_data = json.loads(response.read().decode())
-                results["synonyms"] = [item["word"] for item in synonym_data[:10]]
+                results["synonyms"] = [item.get("word", "") for item in synonym_data[:10] if item.get("word")]
             
             # Get related words (triggers, rhymes, etc.) using rel_trg parameter
             related_url = f"https://api.datamuse.com/words?rel_trg={encoded_phrase}&max=15"
             
             with urllib.request.urlopen(related_url, timeout=5) as response:
                 related_data = json.loads(response.read().decode())
-                results["related"] = [item["word"] for item in related_data[:10]]
+                results["related"] = [item.get("word", "") for item in related_data[:10] if item.get("word")]
             
         except urllib.error.URLError as e:
             results["error"] = f"Network error: Unable to fetch synonyms. {str(e)}"
