@@ -13,7 +13,7 @@ class ThemeHelper:
     """Helper class for crossword theme creation following NYT guidelines"""
     
     # NYT guidelines for 15x15 daily puzzles
-    MIN_THEME_ENTRIES = 3
+    MIN_THEME_ENTRIES = 4
     MAX_THEME_ENTRIES = 5
     MIN_ENTRY_LENGTH = 8
     MAX_ENTRY_LENGTH = 15
