@@ -37,7 +37,7 @@ python3 crossword_cli.py --guidelines
 ### Analyze Theme Entries
 Provide multiple theme entries to analyze them against NYT guidelines:
 ```bash
-python3 crossword_cli.py --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYING AROUND"
+python3 crossword_cli.py --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYING AROUND" "DOUBLE PLAY"
 ```
 
 ### Get Wordplay Suggestions
@@ -49,7 +49,7 @@ python3 crossword_cli.py --wordplay "RUNNING LATE"
 ## NYT Guidelines Summary
 
 For 15x15 daily puzzles:
-- **Theme entries**: 3-5 entries
+- **Theme entries**: 4-5 entries
 - **Entry length**: 8-15 letters each
 - **Symmetry**: Entries should be symmetrically placed
 - **Consistency**: All entries should follow the same theme logic
@@ -59,14 +59,14 @@ For 15x15 daily puzzles:
 
 ### Example: Analyzing a theme
 ```bash
-$ python3 crossword_cli.py --analyze "BREAK THE ICE" "BREAK A LEG" "BREAK THE BANK"
+$ python3 crossword_cli.py --analyze "BREAK THE ICE" "BREAK A LEG" "BREAK THE BANK" "BREAK IT DOWN"
 
 ============================================================
 THEME ANALYSIS
 ============================================================
 
-Theme Entry Count: 3
-Total Theme Length: 32 letters
+Theme Entry Count: 4
+Total Theme Length: 43 letters
 
 Individual Entries:
 ------------------------------------------------------------
@@ -76,6 +76,8 @@ Individual Entries:
    ✓ Good length (9 letters)
 3. BREAK THE BANK
    ✓ Good length (12 letters)
+4. BREAK IT DOWN
+   ✓ Good length (11 letters)
 
 💡 SUGGESTIONS:
 ------------------------------------------------------------
