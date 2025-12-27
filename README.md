@@ -87,7 +87,3 @@ Individual Entries:
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
-
-## License
-
-MIT License - feel free to use this tool for your crossword construction needs!
