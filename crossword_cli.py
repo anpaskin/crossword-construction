@@ -7,6 +7,10 @@ Helps with NYT-style crossword theme creation
 import argparse
 import sys
 from typing import List, Tuple
+import urllib.request
+import urllib.parse
+import urllib.error
+import json
 
 
 class ThemeHelper:
@@ -88,18 +92,39 @@ class ThemeHelper:
         return results
     
     @staticmethod
-    def suggest_wordplay(base_phrase: str) -> List[str]:
-        """Suggest potential wordplay transformations"""
-        suggestions = []
+    def suggest_wordplay(base_phrase: str) -> dict:
+        """Get synonyms and related words for a phrase using Datamuse API"""
+        results = {
+            "synonyms": [],
+            "related": [],
+            "error": None
+        }
         
-        # Common wordplay patterns
-        suggestions.append(f"Add a pun prefix/suffix (e.g., 'NOT {base_phrase}' or '{base_phrase} TOO')")
-        suggestions.append(f"Replace words with homophones")
-        suggestions.append(f"Replace words with rhyming words")
-        suggestions.append(f"Add/remove a letter for a twist")
-        suggestions.append(f"Combine with another phrase for double meaning")
+        try:
+            # Clean the phrase and prepare for API call
+            clean_phrase = base_phrase.strip().lower()
+            
+            # Get synonyms using Datamuse API (ml = means like)
+            encoded_phrase = urllib.parse.quote(clean_phrase)
+            synonym_url = f"https://api.datamuse.com/words?ml={encoded_phrase}&max=15"
+            
+            with urllib.request.urlopen(synonym_url, timeout=5) as response:
+                synonym_data = json.loads(response.read().decode())
+                results["synonyms"] = [item.get("word", "") for item in synonym_data[:10] if item.get("word")]
+            
+            # Get related words (triggers, rhymes, etc.) using rel_trg parameter
+            related_url = f"https://api.datamuse.com/words?rel_trg={encoded_phrase}&max=15"
+            
+            with urllib.request.urlopen(related_url, timeout=5) as response:
+                related_data = json.loads(response.read().decode())
+                results["related"] = [item.get("word", "") for item in related_data[:10] if item.get("word")]
+            
+        except urllib.error.URLError as e:
+            results["error"] = f"Network error: Unable to fetch synonyms. {str(e)}"
+        except Exception as e:
+            results["error"] = f"Error fetching synonyms: {str(e)}"
         
-        return suggestions
+        return results
 
 
 def print_analysis(results: dict):
@@ -142,7 +167,7 @@ Examples:
   # Analyze theme entries
   %(prog)s --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYS WELL"
   
-  # Get wordplay suggestions
+  # Get synonyms and related words
   %(prog)s --wordplay "RUNNING LATE"
         """
     )
@@ -157,7 +182,7 @@ Examples:
     parser.add_argument(
         "--wordplay",
         metavar="PHRASE",
-        help="Get wordplay suggestions for a phrase"
+        help="Get synonyms and related words for a phrase"
     )
     
     parser.add_argument(
@@ -192,12 +217,33 @@ Examples:
         print_analysis(results)
     
     elif args.wordplay:
-        suggestions = ThemeHelper.suggest_wordplay(args.wordplay)
-        print(f"\nWordplay suggestions for: {args.wordplay}")
-        print("-" * 60)
-        for i, suggestion in enumerate(suggestions, 1):
-            print(f"{i}. {suggestion}")
+        results = ThemeHelper.suggest_wordplay(args.wordplay)
+        
+        print(f"\nSynonyms and related words for: {args.wordplay}")
+        print("=" * 60)
+        
+        if results["error"]:
+            print(f"\n⚠️  {results['error']}")
+            print("\nPlease check your internet connection and try again.")
+        else:
+            if results["synonyms"]:
+                print("\n📚 SYNONYMS (similar meanings):")
+                print("-" * 60)
+                for i, word in enumerate(results["synonyms"], 1):
+                    print(f"  {i:2d}. {word}")
+            else:
+                print("\n📚 SYNONYMS: No synonyms found.")
+            
+            if results["related"]:
+                print("\n🔗 RELATED WORDS (associated concepts):")
+                print("-" * 60)
+                for i, word in enumerate(results["related"], 1):
+                    print(f"  {i:2d}. {word}")
+            else:
+                print("\n🔗 RELATED WORDS: No related words found.")
+        
         print()
+
     
     else:
         parser.print_help()

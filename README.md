@@ -5,7 +5,7 @@ A simple command-line tool to aid in crossword construction, following New York 
 ## Features
 
 - **Theme Analysis**: Validate theme entries against NYT guidelines (letter counts)
-- **Wordplay Suggestions**: Get ideas for puns and play-on-words
+- **Synonyms and Related Words**: Get synonyms and related words for phrases
 - **Guidelines Reference**: Quick access to NYT construction guidelines
 
 ## Installation
@@ -40,8 +40,8 @@ Provide multiple theme entries to analyze them against NYT guidelines:
 python3 crossword_cli.py --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYING AROUND" "DOUBLE PLAY"
 ```
 
-### Get Wordplay Suggestions
-Get wordplay ideas for a base phrase:
+### Get Synonyms and Related Words
+Get synonyms and related words for a phrase to help with crossword theme creation:
 ```bash
 python3 crossword_cli.py --wordplay "RUNNING LATE"
 ```
