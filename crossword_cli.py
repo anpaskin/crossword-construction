@@ -125,6 +125,94 @@ class ThemeHelper:
             results["error"] = f"Error fetching synonyms: {str(e)}"
         
         return results
+    
+    @staticmethod
+    def generate_theme_entries(base_entry: str, max_results: int = 10) -> dict:
+        """Generate additional theme entries of equal length using related words and phrases"""
+        results = {
+            "base_entry": base_entry.upper(),
+            "target_length": len(base_entry.replace(" ", "")),
+            "generated_entries": [],
+            "error": None
+        }
+        
+        try:
+            # Clean the phrase and prepare for API call
+            clean_phrase = base_entry.strip().lower()
+            target_length = len(clean_phrase.replace(" ", ""))
+            
+            # Extract key words from the base entry for searching
+            words = clean_phrase.split()
+            
+            all_candidates = []
+            
+            # For each word in the phrase, find related words and build combinations
+            for word in words:
+                encoded_word = urllib.parse.quote(word)
+                
+                # Get synonyms (ml = means like)
+                synonym_url = f"https://api.datamuse.com/words?ml={encoded_word}&max=30"
+                with urllib.request.urlopen(synonym_url, timeout=5) as response:
+                    synonym_data = json.loads(response.read().decode())
+                    for item in synonym_data:
+                        if item.get("word"):
+                            all_candidates.append(item.get("word"))
+                
+                # Get related words (rel_trg = triggers)
+                related_url = f"https://api.datamuse.com/words?rel_trg={encoded_word}&max=30"
+                with urllib.request.urlopen(related_url, timeout=5) as response:
+                    related_data = json.loads(response.read().decode())
+                    for item in related_data:
+                        if item.get("word"):
+                            all_candidates.append(item.get("word"))
+            
+            # Also try to get phrases that are similar to the full entry
+            encoded_phrase = urllib.parse.quote(clean_phrase)
+            
+            # Try to get topics/related concepts for multi-word phrases
+            topic_url = f"https://api.datamuse.com/words?ml={encoded_phrase}&max=50"
+            with urllib.request.urlopen(topic_url, timeout=5) as response:
+                topic_data = json.loads(response.read().decode())
+                for item in topic_data:
+                    if item.get("word"):
+                        all_candidates.append(item.get("word"))
+            
+            # Remove duplicates while preserving order
+            seen = set()
+            unique_candidates = []
+            for candidate in all_candidates:
+                if candidate.lower() not in seen:
+                    seen.add(candidate.lower())
+                    unique_candidates.append(candidate)
+            
+            # Filter candidates by length and format them
+            matching_entries = []
+            for candidate in unique_candidates:
+                # Format as uppercase with spaces removed for length check
+                formatted = candidate.upper().replace(" ", "")
+                if len(formatted) == target_length:
+                    # Format nicely with spaces if it's multiple words
+                    # For single words, keep as is
+                    # For compound words or phrases, try to add spaces
+                    if " " in candidate:
+                        display_candidate = candidate.upper()
+                    else:
+                        display_candidate = formatted
+                    
+                    if display_candidate not in matching_entries:
+                        matching_entries.append(display_candidate)
+                    
+                    if len(matching_entries) >= max_results:
+                        break
+            
+            results["generated_entries"] = matching_entries
+            
+        except urllib.error.URLError as e:
+            results["error"] = f"Network error: Unable to generate theme entries. {str(e)}"
+        except Exception as e:
+            results["error"] = f"Error generating theme entries: {str(e)}"
+        
+        return results
 
 
 def print_analysis(results: dict):
@@ -169,6 +257,9 @@ Examples:
   
   # Get synonyms and related words
   %(prog)s --wordplay "RUNNING LATE"
+  
+  # Generate equal-length theme entries
+  %(prog)s --generate-theme "BREAK THE ICE"
         """
     )
     
@@ -183,6 +274,12 @@ Examples:
         "--wordplay",
         metavar="PHRASE",
         help="Get synonyms and related words for a phrase"
+    )
+    
+    parser.add_argument(
+        "--generate-theme",
+        metavar="ENTRY",
+        help="Generate additional equal-length theme entries based on related words and phrases"
     )
     
     parser.add_argument(
@@ -243,6 +340,35 @@ Examples:
                 print("\n🔗 RELATED WORDS: No related words found.")
         
         print()
+    
+    elif args.generate_theme:
+        results = ThemeHelper.generate_theme_entries(args.generate_theme)
+        
+        print(f"\n{'='*60}")
+        print("THEME ENTRY GENERATOR")
+        print(f"{'='*60}")
+        print(f"\nBase Entry: {results['base_entry']}")
+        print(f"Target Length: {results['target_length']} letters")
+        
+        if results["error"]:
+            print(f"\n⚠️  {results['error']}")
+            print("\nPlease check your internet connection and try again.")
+        else:
+            if results["generated_entries"]:
+                print(f"\n✨ SUGGESTED THEME ENTRIES (equal length - {results['target_length']} letters):")
+                print("-" * 60)
+                for i, entry in enumerate(results["generated_entries"], 1):
+                    # Show the entry with length verification
+                    entry_length = len(entry.replace(" ", ""))
+                    print(f"  {i:2d}. {entry} ({entry_length} letters)")
+                
+                print(f"\n💡 TIP: These entries all have {results['target_length']} letters (excluding spaces),")
+                print("   making them perfect for symmetric crossword placement!")
+            else:
+                print(f"\n⚠️  No matching entries found with {results['target_length']} letters.")
+                print("   Try a different base entry or length.")
+        
+        print(f"{'='*60}\n")
 
     
     else:
