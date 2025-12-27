@@ -129,18 +129,19 @@ class ThemeHelper:
     @staticmethod
     def generate_theme_entries(base_entry: str, max_results: int = 10) -> dict:
         """Generate additional theme entries of equal length using related words and phrases"""
+        # Clean the phrase and calculate target length once
+        clean_phrase = base_entry.strip().lower()
+        clean_no_spaces = clean_phrase.replace(" ", "")
+        target_length = len(clean_no_spaces)
+        
         results = {
             "base_entry": base_entry.upper(),
-            "target_length": len(base_entry.replace(" ", "")),
+            "target_length": target_length,
             "generated_entries": [],
             "error": None
         }
         
         try:
-            # Clean the phrase and prepare for API call
-            clean_phrase = base_entry.strip().lower()
-            target_length = len(clean_phrase.replace(" ", ""))
-            
             # Extract key words from the base entry for searching
             words = clean_phrase.split()
             
@@ -155,16 +156,18 @@ class ThemeHelper:
                 with urllib.request.urlopen(synonym_url, timeout=5) as response:
                     synonym_data = json.loads(response.read().decode())
                     for item in synonym_data:
-                        if item.get("word"):
-                            all_candidates.append(item.get("word"))
+                        word_value = item.get("word")
+                        if word_value:
+                            all_candidates.append(word_value)
                 
                 # Get related words (rel_trg = triggers)
                 related_url = f"https://api.datamuse.com/words?rel_trg={encoded_word}&max=30"
                 with urllib.request.urlopen(related_url, timeout=5) as response:
                     related_data = json.loads(response.read().decode())
                     for item in related_data:
-                        if item.get("word"):
-                            all_candidates.append(item.get("word"))
+                        word_value = item.get("word")
+                        if word_value:
+                            all_candidates.append(word_value)
             
             # Also try to get phrases that are similar to the full entry
             encoded_phrase = urllib.parse.quote(clean_phrase)
@@ -174,8 +177,9 @@ class ThemeHelper:
             with urllib.request.urlopen(topic_url, timeout=5) as response:
                 topic_data = json.loads(response.read().decode())
                 for item in topic_data:
-                    if item.get("word"):
-                        all_candidates.append(item.get("word"))
+                    word_value = item.get("word")
+                    if word_value:
+                        all_candidates.append(word_value)
             
             # Remove duplicates while preserving order
             seen = set()
@@ -188,16 +192,11 @@ class ThemeHelper:
             # Filter candidates by length and format them
             matching_entries = []
             for candidate in unique_candidates:
-                # Format as uppercase with spaces removed for length check
+                # Check if length matches target (excluding spaces)
                 formatted = candidate.upper().replace(" ", "")
                 if len(formatted) == target_length:
-                    # Format nicely with spaces if it's multiple words
-                    # For single words, keep as is
-                    # For compound words or phrases, try to add spaces
-                    if " " in candidate:
-                        display_candidate = candidate.upper()
-                    else:
-                        display_candidate = formatted
+                    # Preserve original spacing if present, otherwise use no spaces
+                    display_candidate = candidate.upper()
                     
                     if display_candidate not in matching_entries:
                         matching_entries.append(display_candidate)
