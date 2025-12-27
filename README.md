@@ -5,6 +5,7 @@ A simple command-line tool to aid in crossword construction, following New York 
 ## Features
 
 - **Theme Analysis**: Validate theme entries against NYT guidelines (letter counts)
+- **Theme Entry Generation**: Generate additional equal-length theme entries using related words and phrases
 - **Synonyms and Related Words**: Get synonyms and related words for phrases
 - **Guidelines Reference**: Quick access to NYT construction guidelines
 
@@ -46,6 +47,13 @@ Get synonyms and related words for a phrase to help with crossword theme creatio
 python3 crossword_cli.py --wordplay "RUNNING LATE"
 ```
 
+### Generate Theme Entries
+Generate additional theme entries of equal length based on related words and phrases:
+```bash
+python3 crossword_cli.py --generate-theme "BREAK THE ICE"
+```
+This will output suggestions for other phrases/words with the same letter count (11 letters in this example), making them suitable for symmetric crossword placement.
+
 ## NYT Guidelines Summary
 
 For 15x15 daily puzzles:
@@ -56,6 +64,30 @@ For 15x15 daily puzzles:
 - **Minimum word length**: 3 letters
 
 ## Examples
+
+### Example: Generating theme entries
+```bash
+$ python3 crossword_cli.py --generate-theme "WORD PLAY"
+
+============================================================
+THEME ENTRY GENERATOR
+============================================================
+
+Base Entry: WORD PLAY
+Target Length: 8 letters
+
+✨ SUGGESTED THEME ENTRIES (equal length - 8 letters):
+------------------------------------------------------------
+   1. GAMEPLAY (8 letters)
+   2. WORDGAME (8 letters)
+   3. PLAYWORD (8 letters)
+   4. LANGUAGE (8 letters)
+   5. DIALOGUE (8 letters)
+
+💡 TIP: These entries all have 8 letters (excluding spaces),
+   making them perfect for symmetric crossword placement!
+============================================================
+```
 
 ### Example: Analyzing a theme
 ```bash
