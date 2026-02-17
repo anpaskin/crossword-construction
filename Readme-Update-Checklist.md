@@ -1,3 +1,3 @@
-- [ ] Add my name to the README
-- [ ] Add my date of birth (3/14/1998) to the README
-- [ ] Add my favorite color (green) to the README
+- [x] Add my name to the README
+- [x] Add my date of birth (3/14/1998) to the README
+- [x] Add my favorite color (green) to the README

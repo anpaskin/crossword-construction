@@ -2,6 +2,12 @@
 
 A simple command-line tool to aid in crossword construction, following New York Times crossword construction guidelines. This tool helps with theme creation, validation, and wordplay suggestions.
 
+## About
+
+- **Author**: anpaskin
+- **Date of Birth**: 3/14/1998
+- **Favorite Color**: green
+
 ## Features
 
 - **Theme Analysis**: Validate theme entries against NYT guidelines (letter counts)
