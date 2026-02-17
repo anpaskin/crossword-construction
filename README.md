@@ -5,6 +5,7 @@ A simple command-line tool to aid in crossword construction, following New York 
 ## Features
 
 - **Theme Analysis**: Validate theme entries against NYT guidelines (letter counts)
+- **Mini Crossword**: Create and validate entries for 5x5 mini crossword puzzles
 - **Synonyms and Related Words**: Get synonyms and related words for phrases
 - **Guidelines Reference**: Quick access to NYT construction guidelines
 
@@ -40,6 +41,12 @@ Provide multiple theme entries to analyze them against NYT guidelines:
 python3 crossword_cli.py --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYING AROUND" "DOUBLE PLAY"
 ```
 
+### Analyze Mini Crossword Entries
+Create and validate entries for 5x5 mini crossword puzzles:
+```bash
+python3 crossword_cli.py --mini "CAT" "DOG" "BAT"
+```
+
 ### Get Synonyms and Related Words
 Get synonyms and related words for a phrase to help with crossword theme creation:
 ```bash
@@ -54,6 +61,13 @@ For 15x15 daily puzzles:
 - **Symmetry**: Entries should be symmetrically placed
 - **Consistency**: All entries should follow the same theme logic
 - **Minimum word length**: 3 letters
+
+For 5x5 mini crosswords:
+- **Theme entries**: 2-3 entries
+- **Entry length**: 3-5 letters each
+- **Grid size**: 5x5
+- **Total words**: ~10 (typically 5 across + 5 down)
+- **Quick to solve**: Perfect for daily practice
 
 ## Examples
 
@@ -82,6 +96,35 @@ Individual Entries:
 💡 SUGGESTIONS:
 ------------------------------------------------------------
   • Note: Theme entries have different lengths. Consider matching lengths for easier symmetric placement.
+
+============================================================
+```
+
+### Example: Analyzing a mini crossword
+```bash
+$ python3 crossword_cli.py --mini "CAT" "DOG" "BAT"
+
+============================================================
+MINI CROSSWORD ANALYSIS
+============================================================
+
+Theme Entry Count: 3
+Total Theme Length: 9 letters
+
+Individual Entries:
+------------------------------------------------------------
+1. CAT
+   ✓ Good length (3 letters)
+2. DOG
+   ✓ Good length (3 letters)
+3. BAT
+   ✓ Good length (3 letters)
+
+💡 SUGGESTIONS:
+------------------------------------------------------------
+  • ✓ All theme entries have the same length - excellent for symmetry!
+  • 💡 Mini crossword grid size: 5x5
+  • 💡 Total words needed: ~10 (typically 5 across + 5 down)
 
 ============================================================
 ```

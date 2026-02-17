@@ -13,6 +13,81 @@ import urllib.error
 import json
 
 
+class MiniCrosswordHelper:
+    """Helper class for mini crossword creation (5x5 grid)"""
+    
+    # Mini crossword guidelines for 5x5 puzzles
+    GRID_SIZE = 5
+    MIN_THEME_ENTRIES = 2
+    MAX_THEME_ENTRIES = 3
+    MIN_ENTRY_LENGTH = 3
+    MAX_ENTRY_LENGTH = 5
+    TOTAL_WORDS = 10  # Typically 5 across + 5 down
+    
+    @staticmethod
+    def validate_entry_length(entry: str) -> Tuple[bool, str]:
+        """Validate if a mini crossword entry has appropriate length"""
+        length = len(entry.replace(" ", ""))
+        
+        if length < MiniCrosswordHelper.MIN_ENTRY_LENGTH:
+            return False, f"Entry too short ({length} letters). Mini crossword entries are typically {MiniCrosswordHelper.MIN_ENTRY_LENGTH}-{MiniCrosswordHelper.MAX_ENTRY_LENGTH} letters."
+        
+        if length > MiniCrosswordHelper.MAX_ENTRY_LENGTH:
+            return False, f"Entry too long ({length} letters). Mini crossword entries are typically {MiniCrosswordHelper.MIN_ENTRY_LENGTH}-{MiniCrosswordHelper.MAX_ENTRY_LENGTH} letters."
+        
+        return True, f"✓ Good length ({length} letters)"
+    
+    @staticmethod
+    def analyze_theme(entries: List[str]) -> dict:
+        """Analyze a set of mini crossword theme entries"""
+        results = {
+            "entries": [],
+            "total_length": 0,
+            "entry_count": len(entries),
+            "warnings": [],
+            "suggestions": []
+        }
+        
+        # Process each entry
+        for entry in entries:
+            clean_entry = entry.replace(" ", "").upper()
+            length = len(clean_entry)
+            is_valid, message = MiniCrosswordHelper.validate_entry_length(entry)
+            
+            results["entries"].append({
+                "text": entry,
+                "length": length,
+                "valid": is_valid,
+                "message": message
+            })
+            results["total_length"] += length
+        
+        # Check entry count
+        if results["entry_count"] < MiniCrosswordHelper.MIN_THEME_ENTRIES:
+            results["warnings"].append(
+                f"Consider adding more theme entries. Mini crosswords typically have {MiniCrosswordHelper.MIN_THEME_ENTRIES}-{MiniCrosswordHelper.MAX_THEME_ENTRIES} theme entries."
+            )
+        elif results["entry_count"] > MiniCrosswordHelper.MAX_THEME_ENTRIES:
+            results["warnings"].append(
+                f"You have many theme entries ({results['entry_count']}). Mini crosswords typically have {MiniCrosswordHelper.MIN_THEME_ENTRIES}-{MiniCrosswordHelper.MAX_THEME_ENTRIES} theme entries."
+            )
+        
+        # Check for paired length symmetry
+        lengths = [e["length"] for e in results["entries"]]
+        if len(set(lengths)) == 1:
+            results["suggestions"].append("✓ All theme entries have the same length - excellent for symmetry!")
+        else:
+            results["suggestions"].append(
+                "⚠️  Note: Theme entries have different lengths. Consider matching lengths for easier symmetric placement."
+            )
+        
+        # Mini-specific suggestions
+        results["suggestions"].append(f"💡 Mini crossword grid size: {MiniCrosswordHelper.GRID_SIZE}x{MiniCrosswordHelper.GRID_SIZE}")
+        results["suggestions"].append(f"💡 Total words needed: ~{MiniCrosswordHelper.TOTAL_WORDS} (typically 5 across + 5 down)")
+        
+        return results
+
+
 class ThemeHelper:
     """Helper class for crossword theme creation following NYT guidelines"""
     
@@ -127,10 +202,10 @@ class ThemeHelper:
         return results
 
 
-def print_analysis(results: dict):
+def print_analysis(results: dict, is_mini: bool = False):
     """Pretty print the theme analysis results"""
     print("\n" + "="*60)
-    print("THEME ANALYSIS")
+    print("MINI CROSSWORD ANALYSIS" if is_mini else "THEME ANALYSIS")
     print("="*60)
     
     print(f"\nTheme Entry Count: {results['entry_count']}")
@@ -167,6 +242,9 @@ Examples:
   # Analyze theme entries
   %(prog)s --analyze "PLAY ON WORDS" "WORD PLAY" "PLAYS WELL"
   
+  # Analyze mini crossword entries
+  %(prog)s --mini "CAT" "DOG" "BAT"
+  
   # Get synonyms and related words
   %(prog)s --wordplay "RUNNING LATE"
         """
@@ -177,6 +255,13 @@ Examples:
         nargs="+",
         metavar="ENTRY",
         help="Analyze theme entries for NYT compliance (provide multiple entries)"
+    )
+    
+    parser.add_argument(
+        "--mini",
+        nargs="+",
+        metavar="ENTRY",
+        help="Analyze theme entries for mini crossword (5x5 grid) (provide multiple entries)"
     )
     
     parser.add_argument(
@@ -210,7 +295,17 @@ Examples:
         print("\nFor 21x21 Sunday Puzzles:")
         print("  • Larger grid allows for more theme entries")
         print("  • Similar proportional guidelines apply")
+        print("\nFor 5x5 Mini Crosswords:")
+        print(f"  • Theme entries: {MiniCrosswordHelper.MIN_THEME_ENTRIES}-{MiniCrosswordHelper.MAX_THEME_ENTRIES} entries")
+        print(f"  • Entry length: {MiniCrosswordHelper.MIN_ENTRY_LENGTH}-{MiniCrosswordHelper.MAX_ENTRY_LENGTH} letters each")
+        print(f"  • Grid size: {MiniCrosswordHelper.GRID_SIZE}x{MiniCrosswordHelper.GRID_SIZE}")
+        print(f"  • Total words: ~{MiniCrosswordHelper.TOTAL_WORDS} (5 across + 5 down)")
+        print("  • Quick to solve, perfect for daily practice")
         print("="*60 + "\n")
+    
+    elif args.mini:
+        results = MiniCrosswordHelper.analyze_theme(args.mini)
+        print_analysis(results, is_mini=True)
     
     elif args.analyze:
         results = ThemeHelper.analyze_theme(args.analyze)
