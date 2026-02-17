@@ -6,7 +6,7 @@ Helps with NYT-style crossword theme creation
 
 import argparse
 import sys
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -38,7 +38,7 @@ class MiniCrosswordHelper:
         return True, f"✓ Good length ({length} letters)"
     
     @staticmethod
-    def analyze_theme(entries: List[str]) -> Dict:
+    def analyze_theme(entries: List[str]) -> Dict[str, Any]:
         """Analyze a set of mini crossword theme entries"""
         results = {
             "entries": [],
@@ -111,7 +111,7 @@ class ThemeHelper:
         return True, f"✓ Good length ({length} letters)"
     
     @staticmethod
-    def analyze_theme(entries: List[str]) -> Dict:
+    def analyze_theme(entries: List[str]) -> Dict[str, Any]:
         """Analyze a set of theme entries for NYT compliance"""
         results = {
             "entries": [],
@@ -167,7 +167,7 @@ class ThemeHelper:
         return results
     
     @staticmethod
-    def suggest_wordplay(base_phrase: str) -> Dict:
+    def suggest_wordplay(base_phrase: str) -> Dict[str, Any]:
         """Get synonyms and related words for a phrase using Datamuse API"""
         results = {
             "synonyms": [],
